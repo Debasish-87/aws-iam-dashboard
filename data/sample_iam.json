@@ -1,0 +1,606 @@
+{
+  "users": [
+    {
+      "name": "alice",
+      "groups": ["Admins", "BillingTeam"],
+      "roles": [
+        {
+          "name": "AdminRole",
+          "trust": ["111111111111"],
+          "permission_boundary": "FullAdminBoundary",
+          "policies": [
+            {
+              "name": "AdministratorAccess",
+              "permissions": ["*"]
+            },
+            {
+              "name": "SecurityOpsInline",
+              "permissions": [
+                "iam:CreateUser",
+                "iam:AttachUserPolicy",
+                "iam:DeleteUser",
+                "kms:CreateKey",
+                "kms:ScheduleKeyDeletion"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "BillingRole",
+          "trust": ["222222222222"],
+          "policies": [
+            {
+              "name": "BillingAccess",
+              "permissions": [
+                "aws-portal:ViewBilling",
+                "aws-portal:ViewUsage",
+                "aws-portal:ModifyBilling"
+              ],
+              "conditions": {
+                "StringEquals": {
+                  "aws:RequestedRegion": "us-east-1"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bob",
+      "groups": ["DevOpsTeam"],
+      "roles": [
+        {
+          "name": "EC2OperatorRole",
+          "trust": ["333333333333"],
+          "policies": [
+            {
+              "name": "EC2FullAccess",
+              "permissions": [
+                "ec2:StartInstances",
+                "ec2:StopInstances",
+                "ec2:DescribeInstances",
+                "ec2:TerminateInstances"
+              ]
+            },
+            {
+              "name": "EC2TagRestriction",
+              "permissions": [
+                "ec2:CreateTags"
+              ],
+              "conditions": {
+                "StringLike": {
+                  "aws:RequestTag/Environment": "Dev*"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "carol",
+      "groups": ["DataAnalyticsTeam"],
+      "roles": [
+        {
+          "name": "S3ReadOnlyRole",
+          "policies": [
+            {
+              "name": "S3ReadOnlyAccess",
+              "permissions": [
+                "s3:ListBucket",
+                "s3:GetObject"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "LambdaDeveloperRole",
+          "service_linked": true,
+          "policies": [
+            {
+              "name": "LambdaFullAccess",
+              "permissions": [
+                "lambda:CreateFunction",
+                "lambda:UpdateFunctionCode",
+                "lambda:InvokeFunction",
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ]
+            },
+            {
+              "name": "LambdaRestrictDelete",
+              "permissions": [],
+              "explicit_deny": [
+                "lambda:DeleteFunction"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "david",
+      "roles": [
+        {
+          "name": "CloudWatchAnalystRole",
+          "policies": [
+            {
+              "name": "CloudWatchReadOnlyAccess",
+              "permissions": [
+                "cloudwatch:GetMetricData",
+                "cloudwatch:ListMetrics",
+                "cloudwatch:GetDashboard"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "eve",
+      "roles": [
+        {
+          "name": "SecurityAuditRole",
+          "policies": [
+            {
+              "name": "SecurityAudit",
+              "permissions": [
+                "iam:GenerateCredentialReport",
+                "iam:GetCredentialReport",
+                "iam:ListUsers",
+                "iam:ListRoles",
+                "iam:ListPolicies"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "frank",
+      "roles": [
+        {
+          "name": "RDSAdminRole",
+          "policies": [
+            {
+              "name": "AmazonRDSFullAccess",
+              "permissions": [
+                "rds:CreateDBInstance",
+                "rds:DeleteDBInstance",
+                "rds:DescribeDBInstances",
+                "rds:ModifyDBInstance"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "grace",
+      "roles": [
+        {
+          "name": "SupportRole",
+          "policies": [
+            {
+              "name": "AWSSupportAccess",
+              "permissions": [
+                "support:*"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "heidi",
+      "roles": [
+        {
+          "name": "ReadOnlyRole",
+          "policies": [
+            {
+              "name": "ReadOnlyAccess",
+              "permissions": [
+                "ec2:Describe*",
+                "s3:Get*",
+                "cloudwatch:Get*"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ivan",
+      "roles": [
+        {
+          "name": "DevOpsRole",
+          "policies": [
+            {
+              "name": "CodeBuildAccess",
+              "permissions": [
+                "codebuild:StartBuild",
+                "codebuild:BatchGetBuilds",
+                "codebuild:ListBuilds"
+              ]
+            },
+            {
+              "name": "CodePipelineAccess",
+              "permissions": [
+                "codepipeline:StartPipelineExecution",
+                "codepipeline:GetPipelineExecution"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "judy",
+      "roles": [
+        {
+          "name": "CostExplorerRole",
+          "policies": [
+            {
+              "name": "CostExplorerReadOnlyAccess",
+              "permissions": [
+                "ce:GetCostAndUsage",
+                "ce:GetCostForecast",
+                "ce:GetUsageForecast"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ken",
+      "groups": ["Admins", "DataAnalyticsTeam"],
+      "roles": [
+        {
+          "name": "DataScientistRole",
+          "policies": [
+            {
+              "name": "DataScienceAccess",
+              "permissions": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "athena:StartQueryExecution",
+                "athena:GetQueryResults"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "SecurityAdminRole",
+          "trust": ["111111111111"],
+          "permission_boundary": "FullAdminBoundary",
+          "policies": [
+            {
+              "name": "SecurityAdminAccess",
+              "permissions": [
+                "iam:CreateUser",
+                "iam:DeleteUser",
+                "iam:AttachUserPolicy",
+                "iam:DetachUserPolicy",
+                "iam:UpdateAssumeRolePolicy"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lisa",
+      "groups": ["DevOpsTeam"],
+      "roles": [
+        {
+          "name": "EC2PowerUserRole",
+          "trust": ["333333333333"],
+          "policies": [
+            {
+              "name": "EC2PowerUserAccess",
+              "permissions": [
+                "ec2:StartInstances",
+                "ec2:StopInstances",
+                "ec2:DescribeInstances",
+                "ec2:RebootInstances",
+                "ec2:ModifyInstanceAttribute"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "mike",
+      "groups": ["SupportTeam"],
+      "roles": [
+        {
+          "name": "SupportTechRole",
+          "policies": [
+            {
+              "name": "SupportTechAccess",
+              "permissions": [
+                "support:DescribeCases",
+                "support:CreateCase",
+                "support:ResolveCase"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "nina",
+      "groups": ["BillingTeam"],
+      "roles": [
+        {
+          "name": "BillingViewerRole",
+          "policies": [
+            {
+              "name": "BillingViewOnly",
+              "permissions": [
+                "aws-portal:ViewBilling",
+                "aws-portal:ViewUsage"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "oscar",
+      "groups": ["DataAnalyticsTeam"],
+      "roles": [
+        {
+          "name": "AthenaUserRole",
+          "policies": [
+            {
+              "name": "AthenaAccess",
+              "permissions": [
+                "athena:StartQueryExecution",
+                "athena:GetQueryResults",
+                "s3:GetObject"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "paula",
+      "groups": ["SecurityTeam"],
+      "roles": [
+        {
+          "name": "SecurityOpsRole",
+          "policies": [
+            {
+              "name": "SecurityOpsAccess",
+              "permissions": [
+                "iam:CreateUser",
+                "iam:DeleteUser",
+                "iam:AttachUserPolicy",
+                "cloudtrail:LookupEvents",
+                "cloudtrail:GetTrailStatus"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "quinn",
+      "groups": ["DevOpsTeam"],
+      "roles": [
+        {
+          "name": "DevOpsJuniorRole",
+          "policies": [
+            {
+              "name": "EC2StartStopAccess",
+              "permissions": [
+                "ec2:StartInstances",
+                "ec2:StopInstances"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "rachel",
+      "groups": ["BillingTeam"],
+      "roles": [
+        {
+          "name": "BillingAssistantRole",
+          "policies": [
+            {
+              "name": "BillingAssistantAccess",
+              "permissions": [
+                "aws-portal:ViewBilling"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "steve",
+      "groups": ["SupportTeam"],
+      "roles": [
+        {
+          "name": "SupportAnalystRole",
+          "policies": [
+            {
+              "name": "SupportAnalystAccess",
+              "permissions": [
+                "support:DescribeCases"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tina",
+      "groups": ["SecurityTeam"],
+      "roles": [
+        {
+          "name": "SecurityViewerRole",
+          "policies": [
+            {
+              "name": "SecurityViewAccess",
+              "permissions": [
+                "iam:ListUsers",
+                "iam:ListRoles"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "umar",
+      "groups": ["DataAnalyticsTeam"],
+      "roles": [
+        {
+          "name": "DataEngineerRole",
+          "policies": [
+            {
+              "name": "DataEngineeringAccess",
+              "permissions": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "glue:CreateJob",
+                "glue:StartJobRun"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "victor",
+      "groups": ["Admins"],
+      "roles": [
+        {
+          "name": "BackupAdminRole",
+          "policies": [
+            {
+              "name": "BackupAdminAccess",
+              "permissions": [
+                "backup:CreateBackupVault",
+                "backup:StartBackupJob",
+                "backup:DeleteBackupVault"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wanda",
+      "groups": ["DevOpsTeam"],
+      "roles": [
+        {
+          "name": "InfrastructureAdminRole",
+          "policies": [
+            {
+              "name": "InfraAdminAccess",
+              "permissions": [
+                "ec2:*",
+                "cloudformation:*"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "xander",
+      "groups": ["DataAnalyticsTeam"],
+      "roles": [
+        {
+          "name": "BigDataAnalystRole",
+          "policies": [
+            {
+              "name": "BigDataAccess",
+              "permissions": [
+                "athena:StartQueryExecution",
+                "athena:GetQueryResults",
+                "emr:RunJobFlow"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "yvonne",
+      "groups": ["BillingTeam"],
+      "roles": [
+        {
+          "name": "BillingAuditorRole",
+          "policies": [
+            {
+              "name": "BillingAuditAccess",
+              "permissions": [
+                "aws-portal:ViewBilling",
+                "aws-portal:ViewUsage",
+                "ce:GetCostAndUsage"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "zach",
+      "groups": ["SecurityTeam"],
+      "roles": [
+        {
+          "name": "IncidentResponseRole",
+          "policies": [
+            {
+              "name": "IncidentResponseAccess",
+              "permissions": [
+                "iam:UpdateAssumeRolePolicy",
+                "cloudtrail:LookupEvents",
+                "guardduty:CreateDetector",
+                "guardduty:GetFindings"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "name": "Admins",
+      "roles": ["AdminRole", "SecurityAdminRole", "BackupAdminRole"]
+    },
+    {
+      "name": "BillingTeam",
+      "roles": ["BillingRole", "BillingViewerRole", "BillingAssistantRole", "BillingAuditorRole"]
+    },
+    {
+      "name": "DevOpsTeam",
+      "roles": ["EC2OperatorRole", "DevOpsRole", "EC2PowerUserRole", "DevOpsJuniorRole", "InfrastructureAdminRole"]
+    },
+    {
+      "name": "DataAnalyticsTeam",
+      "roles": ["DataScientistRole", "AthenaUserRole", "DataEngineerRole", "BigDataAnalystRole"]
+    },
+    {
+      "name": "SecurityTeam",
+      "roles": ["SecurityOpsRole", "SecurityViewerRole", "IncidentResponseRole"]
+    },
+    {
+      "name": "SupportTeam",
+      "roles": ["SupportRole", "SupportTechRole", "SupportAnalystRole"]
+    }
+  ]
+}
